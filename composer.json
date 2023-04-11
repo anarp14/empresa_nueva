@@ -1,0 +1,9 @@
+{
+    "autoload": {
+        "psr-4": {"App\\": "src/"},
+        "files": ["src/auxiliar.php"]
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^3.7"
+    }
+}
