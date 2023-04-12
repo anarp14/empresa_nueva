@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS usuarios CASCADE;
 DROP TABLE IF EXISTS empleados CASCADE;
 DROP TABLE IF EXISTS departamentos CASCADE;
+DROP TABLE IF EXISTS proyectos CASCADE;
 
 CREATE TABLE departamentos (
 id bigserial PRIMARY KEY,
@@ -25,6 +26,18 @@ empleado_id bigint NOT NULL REFERENCES empleados(id),
 validado bool NOT NULL
 );
 
+CREATE TABLE proyectos (
+id bigserial PRIMARY KEY,
+nombre varchar(255) NOT NULL UNIQUE,
+descripcion varchar(255) NOT NULL,
+fecha_inicio date NOT NULL,
+fecha_fin_prevista date,
+estado varchar(20) NOT NULL,
+presupuesto_estimado    numeric(10,2) NOT NULL, 
+empleado_id bigint NOT NULL REFERENCES empleados(id),
+departamento_id bigint NOT NULL REFERENCES departamentos(id)
+);
+
 INSERT INTO departamentos (codigo, denominacion)
 VALUES
 (10, 'Informática'),
@@ -43,4 +56,10 @@ INSERT INTO usuarios (usuario, password, empleado_id, validado)
 VALUES
 ('admin', crypt('admin', gen_salt('bf', 10)), 3, true),
 ('pepe', crypt('pepe', gen_salt('bf', 10)), 1, true),
-('maria', crypt('maria', gen_salt('bf', 10)), 2, true);;
+('maria', crypt('maria', gen_salt('bf', 10)), 2, true);
+
+
+INSERT INTO proyectos (nombre, descripcion, fecha_inicio, fecha_fin_prevista, estado, presupuesto_estimado, empleado_id, departamento_id)
+VALUES ('Proyecto A', 'Descripción del proyecto A', '2022-01-01', '2022-06-30', 'en curso', 50000.00, 1, 1 ),
+       ('Proyecto B', 'Descripción del proyecto B', '2022-03-15', '2022-09-30', 'en curso', 75000.00, 2, 4 ),
+       ('Proyecto C', 'Descripción del proyecto C', '2022-05-01', '2022-12-31', 'finalizado', 100000.00, 1, 3 );
