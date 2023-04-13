@@ -10,18 +10,20 @@
 </head>
 
 <body>
-    <?php
-    require '../../../src/auxiliar.php';
-    require 'auxiliar.php';
-
-    $desde_codigo = obtener_get('desde_codigo');
-    $hasta_codigo = obtener_get('hasta_codigo');
-    $denominacion = obtener_get('denominacion');
-
-    cabecera();
-    ?>
     <div class="container mx-auto">
+        <?php
+        require '../../../src/auxiliar.php';
+        require 'auxiliar.php';
+
+        $desde_codigo = obtener_get('desde_codigo');
+        $hasta_codigo = obtener_get('hasta_codigo');
+        $denominacion = obtener_get('denominacion');
+
+        cabecera();
+        ?>
+        <br>
         <div>
+            <a href="../proyectos/../index.php" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">Volver</a> <br> <br>
             <form action="" method="get">
                 <fieldset>
                     <legend> <b>Criterios de búsqueda </b></legend><br>

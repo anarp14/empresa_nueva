@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/css/output.css" rel="stylesheet">
-    <title>Empleados</title>
+    <title>Proyectos</title>
 </head>
 
 <body>
@@ -18,50 +18,52 @@
     <div class="container mx-auto">
 
         <?php
-      $pdo = conectar();
-      $pdo->beginTransaction();
-      $pdo->exec('LOCK TABLE empleados IN SHARE MODE');
+        $pdo = conectar();
+        $pdo->beginTransaction();
+        $pdo->exec('LOCK TABLE proyectos IN SHARE MODE');
 
-      $estado = obtener_get('estado');
-      $departamento = obtener_get('departamento');
-      
-      $where = '';
-      $execute = [];
+        $estado = obtener_get('estado');
+        $departamento = obtener_get('departamento');
 
-      if ($estado) {
-          $where = 'WHERE p.estado = :estado';
-          $execute = [':estado' => $estado];
-      }
+        $where = [];
+        $execute = [];
 
-      if ($departamento) {
-        $where = 'WHERE d.denominacion = :departamento';
-        $execute = [':departamento' => $departamento];
-    }
+        if (isset($estado)) {
+            $where[] = 'p.estado = :estado';
+            $execute[':estado'] =  $estado;
+        }
 
-      
-      $sent = $pdo->prepare("SELECT COUNT(*)
+        if (isset($departamento)) {
+            $where[] = 'd.denominacion = :departamento';
+            $execute[':departamento'] = $departamento;
+        }
+
+        $where = !empty($where) ? 'WHERE ' . implode(' AND ', $where) : '';
+
+        $sent = $pdo->prepare("SELECT COUNT(*)
                              FROM proyectos p JOIN empleados e
                                ON p.empleado_id = e.id
                                JOIN departamentos d ON p.departamento_id = d.id
                              $where");
-      $sent->execute($execute);
-      $total = $sent->fetchColumn();
-      $sent = $pdo->prepare("SELECT p.*, e.nombre as empleado, d.denominacion as departamento
+        $sent->execute($execute);
+        $total = $sent->fetchColumn();
+        $sent = $pdo->prepare("SELECT p.*, e.nombre as empleado, d.denominacion as departamento
                                FROM proyectos p JOIN empleados e
                                  ON p.empleado_id = e.id
                                  JOIN departamentos d ON p.departamento_id = d.id
                                $where
                                ORDER BY nombre");
-      
-      $sent->execute($execute);
-      $pdo->commit();
-      
-      $nf = new NumberFormatter('es_ES', NumberFormatter::CURRENCY);
-      
-      cabecera();
+
+        $sent->execute($execute);
+        $pdo->commit();
+
+        $nf = new NumberFormatter('es_ES', NumberFormatter::CURRENCY);
+
+        cabecera();
         ?>
         <br>
         <div>
+            <a href="../proyectos/../index.php" class="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-4 py-2 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-900">Volver</a> <br> <br>
             <form action="" method="get">
                 <fieldset>
                     <legend> <b>Criterios de búsqueda:</b> </legend> <br>
@@ -74,17 +76,17 @@
                             <option value="finalizado" <?php if ($estado == 'finalizado') { ?> selected <?php } ?>>Finalizado</option>
                         </select>
                     </label>
-                    <p class="block mb-2 text-sm font-medium w-1/4 pr-4"> Seleccina el departamento: </p> 
-                <label class="block mb-2 text-sm font-medium pr-4">
-                    <input type="checkbox" name="departamento" value="Informática" <?php if ($departamento == 'Informática') { ?> selected <?php } ?>> Informática
-                </label>
-                <label class="block mb-2 text-sm font-medium pr-4">
-                    <input type="checkbox" name="departamento" value="Prevención" <?php if ($departamento == 'Prevención') { ?> selected <?php } ?>> Prevención
-                </label>
-                <label class="block mb-2 text-sm font-medium w-1/4 pr-4">
-                    <input type="checkbox" name="departamento" value="Laboratorio" <?php if ($departamento == 'Laboratorio') { ?> selected <?php } ?>> Laboratorio <br> <br>
+                    <p class="block mb-2 text-sm font-medium w-1/4 pr-4"> Seleccina el departamento: </p>
+                    <label class="block mb-2 text-sm font-medium pr-4">
+                        <input type="checkbox" name="departamento" value="Informática" <?php if ($departamento == 'Informática') { ?> selected <?php } ?>> Informática
+                    </label>
+                    <label class="block mb-2 text-sm font-medium pr-4">
+                        <input type="checkbox" name="departamento" value="Prevención" <?php if ($departamento == 'Prevención') { ?> selected <?php } ?>> Prevención
+                    </label>
+                    <label class="block mb-2 text-sm font-medium w-1/4 pr-4">
+                        <input type="checkbox" name="departamento" value="Laboratorio" <?php if ($departamento == 'Laboratorio') { ?> selected <?php } ?>> Laboratorio <br> <br>
 
-                    <button type="submit" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">Buscar</button>
+                        <button type="submit" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">Buscar</button>
                 </fieldset>
             </form>
         </div>
