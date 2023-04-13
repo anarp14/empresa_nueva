@@ -23,14 +23,21 @@
       $pdo->exec('LOCK TABLE empleados IN SHARE MODE');
 
       $estado = obtener_get('estado');
+      $departamento = obtener_get('departamento');
       
       $where = '';
       $execute = [];
-      $estado = obtener_get('estado');
+
       if ($estado) {
           $where = 'WHERE p.estado = :estado';
           $execute = [':estado' => $estado];
       }
+
+      if ($departamento) {
+        $where = 'WHERE d.denominacion = :departamento';
+        $execute = [':departamento' => $departamento];
+    }
+
       
       $sent = $pdo->prepare("SELECT COUNT(*)
                              FROM proyectos p JOIN empleados e
@@ -57,16 +64,26 @@
         <div>
             <form action="" method="get">
                 <fieldset>
-                    <legend> <b>Crtiterios de búsqueda:</b> </legend> <br>
+                    <legend> <b>Criterios de búsqueda:</b> </legend> <br>
                     <label class="block mb-2 text-sm font-medium w-1/4 pr-4">
                         Estado proyecto:
                         <select name="estado" class="border text-sm rounded-lg p-2.5">
-                            <option value="" <?php if (!$estado) { ?> selected <?php } ?>></option>
+                            <option value="" <?php if ($estado == '') { ?> selected <?php } ?>></option>
                             <option value="sin comenzar" <?php if ($estado == 'sin comenzar') { ?> selected <?php } ?>>Sin comenzar</option>
                             <option value="en curso" <?php if ($estado == 'en curso') { ?> selected <?php } ?>>En curso</option>
                             <option value="finalizado" <?php if ($estado == 'finalizado') { ?> selected <?php } ?>>Finalizado</option>
                         </select>
                     </label>
+                    <p class="block mb-2 text-sm font-medium w-1/4 pr-4"> Seleccina el departamento: </p> 
+                <label class="block mb-2 text-sm font-medium pr-4">
+                    <input type="checkbox" name="departamento" value="Informática" <?php if ($departamento == 'Informática') { ?> selected <?php } ?>> Informática
+                </label>
+                <label class="block mb-2 text-sm font-medium pr-4">
+                    <input type="checkbox" name="departamento" value="Prevención" <?php if ($departamento == 'Prevención') { ?> selected <?php } ?>> Prevención
+                </label>
+                <label class="block mb-2 text-sm font-medium w-1/4 pr-4">
+                    <input type="checkbox" name="departamento" value="Laboratorio" <?php if ($departamento == 'Laboratorio') { ?> selected <?php } ?>> Laboratorio <br> <br>
+
                     <button type="submit" class="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">Buscar</button>
                 </fieldset>
             </form>
